@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "PathSnap (DEV)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_development.dart"
+    },
+    {
+      "name": "PathSnap (STAGING)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_staging.dart"
+    },
+    {
+      "name": "PathSnap (PROD)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    }
+  ]
+}
