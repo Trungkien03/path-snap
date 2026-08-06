@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:path_snap/config/app_config.dart';
-import 'package:path_snap/routing/app_tabbar.dart';
+import 'package:path_snap/ui/map/map_journal_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +34,7 @@ class PathSnapApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground,
       ),
-      home: const AppTabBar(),
+      home: const MapJourneyScreen(),
     );
   }
 }
