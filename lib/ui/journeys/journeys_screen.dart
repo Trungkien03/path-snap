@@ -1,6 +1,7 @@
 // lib/ui/journeys/journeys_screen.dart
 
 import 'package:flutter/cupertino.dart';
+import 'package:path_snap/ui/components/app_loading.dart';
 import 'package:path_snap/ui/journeys/journeys_view_model.dart';
 import 'package:path_snap/ui/journeys/widgets/empty_journeys.dart';
 import 'package:path_snap/ui/journeys/widgets/journey_list.dart';
@@ -46,7 +47,7 @@ class _JourneysScreenState extends State<JourneysScreen> {
           listenable: _viewModel,
           builder: (context, child) {
             if (_viewModel.isLoading) {
-              return const Center(child: CupertinoActivityIndicator());
+              return const AppLoading(message: 'Đang tải...');
             }
 
             if (_viewModel.error != null) {
@@ -58,7 +59,7 @@ class _JourneysScreenState extends State<JourneysScreen> {
               );
             }
 
-            if (_viewModel.isEmpty) {
+            if (_viewModel.journeys.isEmpty) {
               return const EmptyJourneys();
             }
 

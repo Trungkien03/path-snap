@@ -8,7 +8,7 @@ class Journey {
   final String? description;
   final DateTime startDate;
   final DateTime? endDate;
-  final String? coverPhotoPath; // đường dẫn local file
+  final String? coverPhotoPath;
   final DateTime createdAt;
   final DateTime updatedAt;
 
