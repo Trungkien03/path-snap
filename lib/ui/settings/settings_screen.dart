@@ -8,7 +8,15 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(middle: Text('Settings')),
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('Settings'),
+        automaticallyImplyLeading: false,
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.xmark, size: 22),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       child: SafeArea(
         child: ListView(
           children: [
