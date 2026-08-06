@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'config/app_config.dart';
 import 'main.dart'; // import PathSnapApp
 
@@ -13,5 +12,5 @@ void main() {
     showDebugBanner: true,
   );
 
-  runApp(const ProviderScope(child: PathSnapApp()));
+  runApp(PathSnapApp());
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'config/app_config.dart';
+import 'package:path_snap/config/app_config.dart';
+import 'package:path_snap/ui/journeys/journeys_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +12,7 @@ void main() {
     showDebugBanner: false,
   );
 
-  runApp(const ProviderScope(child: PathSnapApp()));
+  runApp(const PathSnapApp());
 }
 
 class PathSnapApp extends StatelessWidget {
@@ -64,25 +64,26 @@ class PathSnapMainHomeScreen extends StatelessWidget {
       tabBuilder: (context, index) {
         return CupertinoTabView(
           builder: (context) {
-            return CupertinoPageScaffold(
-              navigationBar: CupertinoNavigationBar(
-                middle: Text(
-                  index == 0
-                      ? 'My Journeys'
-                      : index == 1
-                      ? 'Map Journal'
-                      : 'Settings',
-                ),
-              ),
-              child: SafeArea(
-                child: Center(
-                  child: Text(
-                    'PathSnap - Cupertino Tab $index',
-                    style: CupertinoTheme.of(context).textTheme.textStyle,
+            switch (index) {
+              case 0:
+                return const JourneysScreen();
+              case 1:
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(
+                    middle: Text('Map Journal'),
                   ),
-                ),
-              ),
-            );
+                  child: Center(child: Text('Map View')),
+                );
+              case 2:
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(
+                    middle: Text('Settings'),
+                  ),
+                  child: Center(child: Text('Settings')),
+                );
+              default:
+                return const SizedBox.shrink();
+            }
           },
         );
       },
