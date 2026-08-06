@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:path_snap/ui/components/app_loading.dart';
 import 'package:path_snap/ui/journeys/journeys_view_model.dart';
 import 'package:path_snap/ui/journeys/widgets/empty_journeys.dart';
-import 'package:path_snap/ui/journeys/widgets/journey_list.dart';
+import 'package:path_snap/ui/journeys/widgets/journey_card.dart';
 
 class JourneysScreen extends StatefulWidget {
-  const JourneysScreen({super.key});
+  final ScrollController? scrollController;
+
+  const JourneysScreen({super.key, this.scrollController});
 
   @override
   State<JourneysScreen> createState() => _JourneysScreenState();
@@ -31,42 +33,79 @@ class _JourneysScreenState extends State<JourneysScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: const Text('My Journeys'),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.add),
-          onPressed: () {
-            // TODO: tạo chuyến đi mới
-          },
-        ),
+    return Container(
+      color: CupertinoColors.systemGroupedBackground.resolveFrom(context),
+      child: CustomScrollView(
+        controller: widget.scrollController,
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(children: [_buildDragHandle(), _buildHeader()]),
+          ),
+
+          // Nội dung chính: Danh sách / Loading / Empty
+          _buildSliverContent(),
+        ],
       ),
-      child: SafeArea(
-        child: ListenableBuilder(
-          listenable: _viewModel,
-          builder: (context, child) {
-            if (_viewModel.isLoading) {
-              return const AppLoading(message: 'Đang tải...');
-            }
+    );
+  }
 
-            if (_viewModel.error != null) {
-              return Center(
-                child: Text(
-                  'Lỗi: ${_viewModel.error}',
-                  style: const TextStyle(color: CupertinoColors.systemRed),
-                ),
-              );
-            }
-
-            if (_viewModel.journeys.isEmpty) {
-              return const EmptyJourneys();
-            }
-
-            return JourneyList(journeys: _viewModel.journeys);
-          },
-        ),
+  Widget _buildDragHandle() {
+    return Container(
+      margin: const EdgeInsets.only(top: 8, bottom: 8),
+      width: 36,
+      height: 5,
+      decoration: BoxDecoration(
+        color: CupertinoColors.systemGrey4,
+        borderRadius: BorderRadius.circular(2.5),
       ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 32, left: 16, right: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'My Journeys',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {},
+            child: const Icon(CupertinoIcons.add),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSliverContent() {
+    return ListenableBuilder(
+      listenable: _viewModel,
+      builder: (context, _) {
+        if (_viewModel.isLoading) {
+          return const SliverFillRemaining(
+            child: AppLoading(message: 'Đang tải...'),
+          );
+        }
+
+        if (_viewModel.journeys.isEmpty) {
+          return const SliverFillRemaining(child: EmptyJourneys());
+        }
+
+        // Dùng SliverList để cuộn liền mạch với Sheet
+        return SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final journey = _viewModel.journeys[index];
+              return JourneyCard(journey: journey);
+            }, childCount: _viewModel.journeys.length),
+          ),
+        );
+      },
     );
   }
 }
