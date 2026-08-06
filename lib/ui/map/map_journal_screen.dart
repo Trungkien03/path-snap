@@ -93,30 +93,92 @@ class _MapJourneyScreenState extends State<MapJourneyScreen> {
 }
 
 /// Marker đẹp cho vị trí người dùng
-class _UserLocationMarker extends StatelessWidget {
+class _UserLocationMarker extends StatefulWidget {
   const _UserLocationMarker();
 
   @override
+  State<_UserLocationMarker> createState() => _UserLocationMarkerState();
+}
+
+class _UserLocationMarkerState extends State<_UserLocationMarker>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat();
+
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: CupertinoColors.activeBlue.withOpacity(0.2),
-        border: Border.all(color: CupertinoColors.activeBlue, width: 3),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.activeBlue.withOpacity(0.3),
-            blurRadius: 8,
-          ),
-        ],
-      ),
-      child: const Center(
-        child: Icon(
-          CupertinoIcons.location_solid,
-          color: CupertinoColors.activeBlue,
-          size: 18,
-        ),
-      ),
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        final value = _animation.value;
+
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // Vòng pulse ngoài (lan tỏa + mờ dần)
+            Container(
+              width: 40 + (value * 30),
+              height: 40 + (value * 30),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: CupertinoColors.activeBlue.withOpacity(
+                  0.35 * (1 - value),
+                ),
+              ),
+            ),
+
+            // Vòng pulse thứ 2 (lệch phase một chút cho mượt)
+            Container(
+              width: 30 + (value * 20),
+              height: 30 + (value * 20),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: CupertinoColors.activeBlue.withOpacity(
+                  0.25 * (1 - value),
+                ),
+              ),
+            ),
+
+            // Chấm xanh chính (giống Google Maps)
+            Container(
+              width: 18,
+              height: 18,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: CupertinoColors.activeBlue,
+                border: Border.all(color: CupertinoColors.white, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: CupertinoColors.black.withOpacity(0.25),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
