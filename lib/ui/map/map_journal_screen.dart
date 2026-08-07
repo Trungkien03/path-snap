@@ -112,11 +112,12 @@ class _MapJourneyScreenState extends State<MapJourneyScreen> {
             },
           ),
 
-          // ===== SETTINGS Button =====
+          // ===== TOP BUTTONS =====
           _buildTopLeftJourneysButton(),
           _buildTopRightSettingsButton(),
 
-          // ===== BOTTOM BUTTON GROUP =====
+          // ===== BOTTOM CONTROLS =====
+          _buildBottomLeftButton(), // Đã tích hợp ListenableBuilder bên trong
           _buildBottomActionBar(),
           _buildBottomRightLocateButton(),
         ],
@@ -132,6 +133,14 @@ class _MapJourneyScreenState extends State<MapJourneyScreen> {
         icon: CupertinoIcons.list_bullet,
         onTap: _showJourneysSheet,
       ),
+    );
+  }
+
+  Widget _buildTopRightSettingsButton() {
+    return Positioned(
+      top: MediaQuery.of(context).padding.top + 12,
+      right: 16,
+      child: CircleIconButton(icon: CupertinoIcons.gear, onTap: _showSettings),
     );
   }
 
@@ -152,11 +161,26 @@ class _MapJourneyScreenState extends State<MapJourneyScreen> {
     );
   }
 
-  Widget _buildTopRightSettingsButton() {
-    return Positioned(
-      top: MediaQuery.of(context).padding.top + 12,
-      right: 16,
-      child: CircleIconButton(icon: CupertinoIcons.gear, onTap: _showSettings),
+  Widget _buildBottomLeftButton() {
+    return ListenableBuilder(
+      listenable: _viewModel,
+      builder: (context, _) {
+        if (!_viewModel.isJourneyStarted) {
+          return const SizedBox.shrink(); // Chỉ render nút Stop khi đã start
+        }
+
+        return Positioned(
+          bottom: 40,
+          left: 16,
+          child: CircleIconButton(
+            icon: CupertinoIcons
+                .stop_fill, // CupertinoIcons.stop_fill cho hiệu ứng solid đẹp hơn
+            onTap: () {
+              _viewModel.stopJourney();
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -168,7 +192,15 @@ class _MapJourneyScreenState extends State<MapJourneyScreen> {
       child: ListenableBuilder(
         listenable: _viewModel,
         builder: (context, _) {
-          return BottomActionBar(onStartTap: () {});
+          return BottomActionBar(
+            isJourneyStarted: _viewModel.isJourneyStarted,
+            onStartTap: () {
+              _viewModel.startJourney();
+            },
+            onSnapTap: () {
+              // TODO: Logic chụp hình Path Snap
+            },
+          );
         },
       ),
     );

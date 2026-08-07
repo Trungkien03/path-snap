@@ -18,6 +18,10 @@ class MapJourneyViewModel extends ChangeNotifier {
   String? get locationError => _locationError;
   bool get hasActiveJourney => _journeys.any((j) => j.endDate == null);
 
+  bool _isJourneyStarted = false;
+
+  bool get isJourneyStarted => _isJourneyStarted;
+
   Future<void> load() async {
     _isLoading = true;
     notifyListeners();
@@ -25,6 +29,16 @@ class MapJourneyViewModel extends ChangeNotifier {
     await getCurrentLocation();
 
     _isLoading = false;
+    notifyListeners();
+  }
+
+  void startJourney() {
+    _isJourneyStarted = true;
+    notifyListeners();
+  }
+
+  void stopJourney() {
+    _isJourneyStarted = false;
     notifyListeners();
   }
 

@@ -3,21 +3,34 @@
 import 'package:flutter/cupertino.dart';
 
 class BottomActionBar extends StatelessWidget {
+  final bool isJourneyStarted;
   final VoidCallback onStartTap;
+  final VoidCallback onSnapTap;
 
-  const BottomActionBar({super.key, required this.onStartTap});
+  const BottomActionBar({
+    super.key,
+    required this.isJourneyStarted,
+    required this.onStartTap,
+    required this.onSnapTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Nút Start (chỉ hiện khi chưa có journey active)
-        _PillButton(
-          icon: CupertinoIcons.play_fill,
-          label: 'Start',
-          onTap: onStartTap,
-        ),
+        if (!isJourneyStarted)
+          _PillButton(
+            icon: CupertinoIcons.play_fill,
+            label: 'Start',
+            onTap: onStartTap,
+          )
+        else
+          _PillButton(
+            icon: CupertinoIcons.camera_fill, // Icon chụp hình
+            label: 'Path Snap',
+            onTap: onSnapTap,
+          ),
       ],
     );
   }
