@@ -1,68 +1,84 @@
+// lib/ui/map/widgets/bottom_action_bar.dart
+
 import 'package:flutter/cupertino.dart';
 
 class BottomActionBar extends StatelessWidget {
-  final bool hasActiveJourney;
-  final VoidCallback onJourneysTap;
   final VoidCallback onStartTap;
 
-  const BottomActionBar({
-    required this.hasActiveJourney,
-    required this.onJourneysTap,
-    required this.onStartTap,
+  const BottomActionBar({super.key, required this.onStartTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Nút Start (chỉ hiện khi chưa có journey active)
+        _PillButton(
+          icon: CupertinoIcons.play_fill,
+          label: 'Start',
+          onTap: onStartTap,
+        ),
+      ],
+    );
+  }
+}
+
+class _PillButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _PillButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground.resolveFrom(context),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.black.withOpacity(0.12),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemBackground
+              .resolveFrom(context)
+              .withOpacity(0.72),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: CupertinoColors.systemGrey4
+                .resolveFrom(context)
+                .withOpacity(0.5),
+            width: 0.5,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Nút Journeys (luôn có)
-          Expanded(
-            child: CupertinoButton(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              onPressed: onJourneysTap,
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(CupertinoIcons.collections, size: 20),
-                  SizedBox(width: 8),
-                  Text('Journeys'),
-                ],
-              ),
+          boxShadow: [
+            BoxShadow(
+              color: CupertinoColors.black.withOpacity(0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
-          ),
-
-          // Nút Start (chỉ hiện khi chưa có journey active)
-          if (!hasActiveJourney) ...[
-            Container(width: 1, height: 28, color: CupertinoColors.systemGrey4),
-            Expanded(
-              child: CupertinoButton(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                onPressed: onStartTap,
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(CupertinoIcons.play_fill, size: 20),
-                    SizedBox(width: 8),
-                    Text('Start'),
-                  ],
-                ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 17,
+              color: CupertinoColors.label.resolveFrom(context),
+            ),
+            const SizedBox(width: 7),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.label.resolveFrom(context),
+                letterSpacing: -0.2,
               ),
             ),
           ],
-        ],
+        ),
       ),
     );
   }

@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:path_snap/ui/components/circle_icon_button.dart';
 import 'package:path_snap/ui/journeys/journeys_screen.dart';
 import 'package:path_snap/ui/map/map_journal_view_model.dart';
 import 'package:path_snap/ui/map/widgets/bottom_action_bar.dart';
@@ -112,11 +113,41 @@ class _MapJourneyScreenState extends State<MapJourneyScreen> {
           ),
 
           // ===== SETTINGS Button =====
+          _buildTopLeftJourneysButton(),
           _buildTopRightSettingsButton(),
 
           // ===== BOTTOM BUTTON GROUP =====
           _buildBottomActionBar(),
+          _buildBottomRightLocateButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTopLeftJourneysButton() {
+    return Positioned(
+      top: MediaQuery.of(context).padding.top + 12,
+      left: 16,
+      child: CircleIconButton(
+        icon: CupertinoIcons.list_bullet,
+        onTap: _showJourneysSheet,
+      ),
+    );
+  }
+
+  Widget _buildBottomRightLocateButton() {
+    return Positioned(
+      bottom: 40,
+      right: 16,
+      child: CircleIconButton(
+        icon: CupertinoIcons.location_fill,
+        onTap: () {
+          if (_viewModel.currentPosition != null) {
+            _mapController.move(_viewModel.currentPosition!, 15);
+          } else {
+            _viewModel.refreshLocation();
+          }
+        },
       ),
     );
   }
@@ -125,30 +156,7 @@ class _MapJourneyScreenState extends State<MapJourneyScreen> {
     return Positioned(
       top: MediaQuery.of(context).padding.top + 12,
       right: 16,
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: _showSettings,
-        child: Container(
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            color: CupertinoColors.systemBackground.resolveFrom(context),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: CupertinoColors.black.withOpacity(0.12),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(
-            CupertinoIcons.gear,
-            size: 22,
-            color: CupertinoColors.label,
-          ),
-        ),
-      ),
+      child: CircleIconButton(icon: CupertinoIcons.gear, onTap: _showSettings),
     );
   }
 
@@ -156,17 +164,11 @@ class _MapJourneyScreenState extends State<MapJourneyScreen> {
     return Positioned(
       left: 16,
       right: 16,
-      bottom: 32,
+      bottom: 40,
       child: ListenableBuilder(
         listenable: _viewModel,
         builder: (context, _) {
-          return BottomActionBar(
-            hasActiveJourney: _viewModel.hasActiveJourney,
-            onJourneysTap: _showJourneysSheet,
-            onStartTap: () {
-              // TODO: start journey
-            },
-          );
+          return BottomActionBar(onStartTap: () {});
         },
       ),
     );
